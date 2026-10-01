@@ -1,0 +1,226 @@
+(compilation-unit
+(package-id $anon . 0.0.0)
+  (import-package ballerina io (as io))
+  (variable calls (type
+    (value-type int)) (expr
+    (literal 0)))
+  (function makeText () (
+    (value-type string))
+    (block-function-body
+      (compound-assignment +
+        (simple-var-ref calls)
+        (literal 1))
+      (return
+        (literal a😀b))))
+  (function firstChar (
+    (variable text (type
+      (value-type string)))) (
+    (value-type string))
+    (block-function-body
+      (foreach
+        (var-def
+          (variable char))
+        (simple-var-ref text)
+        (block-stmt
+          (return
+            (simple-var-ref char))))
+      (return
+        (literal empty))))
+  (function main () (
+    (value-type null))
+    (block-function-body
+      (var-def
+        (variable text (type
+          (value-type string)) (expr
+          (literal a😀b))))
+      (foreach
+        (var-def
+          (variable char (type
+            (user-defined-type string Char))))
+        (simple-var-ref text)
+        (block-stmt
+          (expression-stmt
+            (invocation io println (
+              (simple-var-ref char))))))
+      (foreach
+        (var-def
+          (variable char))
+        (literal xy)
+        (block-stmt
+          (if
+            (binary-expr ==
+              (simple-var-ref char)
+              (literal x))
+            (block-stmt
+              (continue)) ())
+          (block-stmt
+            (var-def
+              (variable verified (type
+                (user-defined-type string Char)) (expr
+                (simple-var-ref char))))
+            (expression-stmt
+              (invocation io println (
+                (simple-var-ref verified)))))))
+      (foreach
+        (var-def
+          (variable char (type
+            (value-type string))))
+        (literal )
+        (block-stmt
+          (expression-stmt
+            (invocation io println (
+              (simple-var-ref char))))))
+      (var-def
+        (variable collected (type
+          (value-type string)) (expr
+          (literal ))))
+      (foreach
+        (var-def
+          (variable char))
+        (invocation makeText ())
+        (block-stmt
+          (compound-assignment +
+            (simple-var-ref collected)
+            (simple-var-ref char))))
+      (expression-stmt
+        (invocation io println (
+          (simple-var-ref calls)
+          (literal :)
+          (simple-var-ref collected))))
+      (assignment
+        (simple-var-ref text)
+        (literal abc))
+      (assignment
+        (simple-var-ref collected)
+        (literal ))
+      (foreach
+        (var-def
+          (variable char (type
+            (value-type string))))
+        (simple-var-ref text)
+        (block-stmt
+          (assignment
+            (simple-var-ref text)
+            (literal ))
+          (compound-assignment +
+            (simple-var-ref collected)
+            (simple-var-ref char))))
+      (expression-stmt
+        (invocation io println (
+          (simple-var-ref collected))))
+      (var-def
+        (variable captures (type
+          (array-type
+            (function-type () (
+              (user-defined-type string Char))) dimensions: 1 ([]))) (expr
+          (list-constructor-expr))))
+      (foreach
+        (var-def
+          (variable char))
+        (literal a😀b)
+        (block-stmt
+          (if
+            (binary-expr ==
+              (simple-var-ref char)
+              (literal 😀))
+            (block-stmt
+              (continue)) ())
+          (block-stmt
+            (expression-stmt
+              (invocation push expr:
+                (simple-var-ref captures) (
+                (lambda
+                  (function $anonFunc$_0 () (
+                    (user-defined-type string Char))
+                    (block-function-body
+                      (return
+                        (simple-var-ref char)))))))))))
+      (foreach
+        (var-def
+          (variable fn))
+        (simple-var-ref captures)
+        (block-stmt
+          (expression-stmt
+            (invocation io println (
+              (invocation fn ()))))))
+      (assignment
+        (simple-var-ref collected)
+        (literal ))
+      (foreach
+        (var-def
+          (variable outerChar))
+        (literal ab)
+        (block-stmt
+          (foreach
+            (var-def
+              (variable inner))
+            (literal xy)
+            (block-stmt
+              (if
+                (binary-expr ==
+                  (simple-var-ref inner)
+                  (literal x))
+                (block-stmt
+                  (continue)) ())
+              (block-stmt
+                (compound-assignment +
+                  (simple-var-ref collected)
+                  (binary-expr +
+                    (simple-var-ref outerChar)
+                    (simple-var-ref inner)))
+                (break))))))
+      (expression-stmt
+        (invocation io println (
+          (simple-var-ref collected))))
+      (var-def
+        (variable count (type
+          (value-type int)) (expr
+          (literal 0))))
+      (foreach
+        (var-def
+          (variable _))
+        (literal é)
+        (block-stmt
+          (compound-assignment +
+            (simple-var-ref count)
+            (literal 1))))
+      (expression-stmt
+        (invocation io println (
+          (simple-var-ref count))))
+      (expression-stmt
+        (invocation io println (
+          (invocation firstChar (
+            (literal 😀a))))))
+      (expression-stmt
+        (invocation io println (
+          (invocation firstChar (
+            (literal ))))))
+      (var-def
+        (variable longText (type
+          (value-type string)) (expr
+          (literal 😀))))
+      (foreach
+        (var-def
+          (variable _ (type
+            (value-type int))))
+        (binary-expr ..<
+          (literal 0)
+          (literal 15))
+        (block-stmt
+          (compound-assignment +
+            (simple-var-ref longText)
+            (simple-var-ref longText))))
+      (assignment
+        (simple-var-ref count)
+        (literal 0))
+      (foreach
+        (var-def
+          (variable _))
+        (simple-var-ref longText)
+        (block-stmt
+          (compound-assignment +
+            (simple-var-ref count)
+            (literal 1))))
+      (expression-stmt
+        (invocation io println (
+          (simple-var-ref count)))))))

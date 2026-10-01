@@ -1,0 +1,7 @@
+-- stdout --
+-- stderr --
+error[SEMANTIC_ERROR]: expect first argument to be a subtype of string
+  --> string-iterator-e.bal:18:9
+   |
+18 |     _ = string:iterator(42); // @error receiver must be string
+   |         ^^^^^^^^^^^^^^^^^^^

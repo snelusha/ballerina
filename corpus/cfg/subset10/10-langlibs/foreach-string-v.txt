@@ -1,0 +1,276 @@
+(firstChar
+  (bb0 () (bb1))
+  (bb1 (bb0) (bb2 bb3)
+    (simple-var-ref text)
+    (var-def
+      (variable char))
+  )
+  (bb2 (bb1) ()
+    (return
+      (simple-var-ref char))
+  )
+  (bb3 (bb1) ()
+    (return
+      (literal empty))
+  )
+)
+(main
+  (bb0 () (bb1)
+    (var-def
+      (variable text (type
+        (value-type string)) (expr
+        (literal a😀b))))
+  )
+  (bb1 (bb0 bb2) (bb2 bb3)
+    (simple-var-ref text)
+    (var-def
+      (variable char (type
+        (user-defined-type string Char))))
+  )
+  (bb2 (bb1) (bb1)
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref char))))
+  )
+  (bb3 (bb1) (bb4))
+  (bb4 (bb3 bb7 bb8) (bb5 bb6)
+    (literal xy)
+    (var-def
+      (variable char))
+  )
+  (bb5 (bb4) (bb7 bb8)
+    (binary-expr ==
+      (simple-var-ref char)
+      (literal x))
+  )
+  (bb6 (bb4) (bb9))
+  (bb7 (bb5) (bb4)
+    (continue)
+  )
+  (bb8 (bb5) (bb4)
+    (var-def
+      (variable verified (type
+        (user-defined-type string Char)) (expr
+        (simple-var-ref char))))
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref verified))))
+  )
+  (bb9 (bb6 bb10) (bb10 bb11)
+    (literal )
+    (var-def
+      (variable char (type
+        (value-type string))))
+  )
+  (bb10 (bb9) (bb9)
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref char))))
+  )
+  (bb11 (bb9) (bb12)
+    (var-def
+      (variable collected (type
+        (value-type string)) (expr
+        (literal ))))
+  )
+  (bb12 (bb11 bb13) (bb13 bb14)
+    (invocation makeText ())
+    (var-def
+      (variable char))
+  )
+  (bb13 (bb12) (bb12)
+    (compound-assignment +
+      (simple-var-ref collected)
+      (simple-var-ref char))
+  )
+  (bb14 (bb12) (bb15)
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref calls)
+        (literal :)
+        (simple-var-ref collected))))
+    (assignment
+      (simple-var-ref text)
+      (literal abc))
+    (assignment
+      (simple-var-ref collected)
+      (literal ))
+  )
+  (bb15 (bb14 bb16) (bb16 bb17)
+    (simple-var-ref text)
+    (var-def
+      (variable char (type
+        (value-type string))))
+  )
+  (bb16 (bb15) (bb15)
+    (assignment
+      (simple-var-ref text)
+      (literal ))
+    (compound-assignment +
+      (simple-var-ref collected)
+      (simple-var-ref char))
+  )
+  (bb17 (bb15) (bb18)
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref collected))))
+    (var-def
+      (variable captures (type
+        (array-type
+          (function-type () (
+            (user-defined-type string Char))) dimensions: 1 ([]))) (expr
+        (list-constructor-expr))))
+  )
+  (bb18 (bb17 bb21 bb22) (bb19 bb20)
+    (literal a😀b)
+    (var-def
+      (variable char))
+  )
+  (bb19 (bb18) (bb21 bb22)
+    (binary-expr ==
+      (simple-var-ref char)
+      (literal 😀))
+  )
+  (bb20 (bb18) (bb23))
+  (bb21 (bb19) (bb18)
+    (continue)
+  )
+  (bb22 (bb19) (bb18)
+    (expression-stmt
+      (invocation lang.array push (
+        (simple-var-ref captures)
+        (lambda
+          (function $anonFunc$_0 () (
+            (user-defined-type string Char))
+            (block-function-body
+              (return
+                (simple-var-ref char))))))))
+  )
+  (bb23 (bb20 bb24) (bb24 bb25)
+    (simple-var-ref captures)
+    (var-def
+      (variable fn))
+  )
+  (bb24 (bb23) (bb23)
+    (expression-stmt
+      (invocation io println (
+        (invocation fn ()))))
+  )
+  (bb25 (bb23) (bb26)
+    (assignment
+      (simple-var-ref collected)
+      (literal ))
+  )
+  (bb26 (bb25 bb31) (bb27 bb28)
+    (literal ab)
+    (var-def
+      (variable outerChar))
+  )
+  (bb27 (bb26) (bb29))
+  (bb28 (bb26) (bb34)
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref collected))))
+    (var-def
+      (variable count (type
+        (value-type int)) (expr
+        (literal 0))))
+  )
+  (bb29 (bb27 bb32) (bb30 bb31)
+    (literal xy)
+    (var-def
+      (variable inner))
+  )
+  (bb30 (bb29) (bb32 bb33)
+    (binary-expr ==
+      (simple-var-ref inner)
+      (literal x))
+  )
+  (bb31 (bb29 bb33) (bb26))
+  (bb32 (bb30) (bb29)
+    (continue)
+  )
+  (bb33 (bb30) (bb31)
+    (compound-assignment +
+      (simple-var-ref collected)
+      (binary-expr +
+        (simple-var-ref outerChar)
+        (simple-var-ref inner)))
+    (break)
+  )
+  (bb34 (bb28 bb35) (bb35 bb36)
+    (literal é)
+    (var-def
+      (variable _))
+  )
+  (bb35 (bb34) (bb34)
+    (compound-assignment +
+      (simple-var-ref count)
+      (literal 1))
+  )
+  (bb36 (bb34) (bb37)
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref count))))
+    (expression-stmt
+      (invocation io println (
+        (invocation firstChar (
+          (literal 😀a))))))
+    (expression-stmt
+      (invocation io println (
+        (invocation firstChar (
+          (literal ))))))
+    (var-def
+      (variable longText (type
+        (value-type string)) (expr
+        (literal 😀))))
+  )
+  (bb37 (bb36 bb38) (bb38 bb39)
+    (binary-expr ..<
+      (literal 0)
+      (literal 15))
+    (var-def
+      (variable _ (type
+        (value-type int))))
+  )
+  (bb38 (bb37) (bb37)
+    (compound-assignment +
+      (simple-var-ref longText)
+      (simple-var-ref longText))
+  )
+  (bb39 (bb37) (bb40)
+    (assignment
+      (simple-var-ref count)
+      (literal 0))
+  )
+  (bb40 (bb39 bb41) (bb41 bb42)
+    (simple-var-ref longText)
+    (var-def
+      (variable _))
+  )
+  (bb41 (bb40) (bb40)
+    (compound-assignment +
+      (simple-var-ref count)
+      (literal 1))
+  )
+  (bb42 (bb40) ()
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref count))))
+  )
+)
+(makeText
+  (bb0 () ()
+    (compound-assignment +
+      (simple-var-ref calls)
+      (literal 1))
+    (return
+      (literal a😀b))
+  )
+)
+($anonFunc$_0
+  (bb0 () ()
+    (return
+      (simple-var-ref char))
+  )
+)

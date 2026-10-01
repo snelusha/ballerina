@@ -1,0 +1,19 @@
+-- stdout --
+-- stderr --
+error[SEMANTIC_ERROR]: incompatible type: expected int, got string:Char
+  --> foreach-string-e.bal:22:23
+   |
+22 |         int invalid = char; // @error inferred element type is string:Char
+   |                       ^^^^
+
+error[SEMANTIC_ERROR]: incompatible type: expected nil|{| value: int, never... |}, got nil|{| value: string:Char, never... |}
+  --> foreach-string-e.bal:25:38
+   |
+25 |     record {| int value; |}? wrong = "abc".iterator().next(); // @error iterator yields string:Char
+   |                                      ^^^^^^^^^^^^^^^^^^^^^^^
+
+error[SEMANTIC_ERROR]: invalid variable type int
+  --> foreach-string-e.bal:18:13
+   |
+18 |     foreach int char in "abc" { // @error string:Char is not assignable to int
+   |             ^^^^^^^^

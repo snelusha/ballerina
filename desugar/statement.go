@@ -808,7 +808,37 @@ func createIteratorInvocation(cx *functionContext, receiver ast.BLangExpression,
 	if semtypes.IsSubtype(cx.typeCtx(), receiverType, semtypes.XML) {
 		return createXMLIteratorInvocation(cx, receiver, receiverType)
 	}
+	if semtypes.IsSubtype(cx.typeCtx(), receiverType, semtypes.String) {
+		return createStringIteratorInvocation(cx, receiver, pos)
+	}
 	return createMethodInvocation(cx, receiver, "iterator", receiverType, []ast.BLangExpression{}, pos)
+}
+
+func createStringIteratorInvocation(cx *functionContext, receiver ast.BLangExpression, pos diagnostics.Location) *ast.BLangInvocation {
+	const pkgName = "lang.string"
+	space, ok := cx.getImportedSymbolSpace(pkgName)
+	if !ok {
+		cx.internalError(pkgName+" symbol space not found", pos)
+		return nil
+	}
+	iteratorRef, ok := space.GetSymbol("iterator")
+	if !ok {
+		cx.internalError(pkgName+":iterator symbol not found", pos)
+		return nil
+	}
+	cx.addImplicitImport(pkgName, ast.BLangImportPackage{
+		OrgName:      newIdentifier("ballerina"),
+		PkgNameComps: []ast.BLangIdentifier{{Value: "lang"}, {Value: "string"}},
+		Alias:        newIdentifier(pkgName),
+	})
+	returnTy := buildIteratorType(cx.typeEnv(), semtypes.Char)
+	inv := &ast.BLangInvocation{PkgAlias: newIdentifier(pkgName)}
+	inv.Name = newIdentifier("iterator")
+	inv.ArgExprs = []ast.BLangExpression{receiver}
+	inv.SetSymbol(iteratorRef)
+	inv.SetDeterminedType(returnTy)
+	inv.SetPosition(pos)
+	return inv
 }
 
 func createXMLIteratorInvocation(cx *functionContext, receiver ast.BLangExpression, receiverType semtypes.SemType) *ast.BLangInvocation {
@@ -839,11 +869,11 @@ func createXMLIteratorInvocation(cx *functionContext, receiver ast.BLangExpressi
 
 func (ctx *packageContext) xmlIteratorType(itemTy semtypes.SemType) semtypes.SemType {
 	return ctx.xmlIteratorTypes.GetOrBuild(itemTy, func() semtypes.SemType {
-		return buildXMLIteratorType(ctx.typeEnv(), itemTy)
+		return buildIteratorType(ctx.typeEnv(), itemTy)
 	})
 }
 
-func buildXMLIteratorType(env semtypes.Env, itemTy semtypes.SemType) semtypes.SemType {
+func buildIteratorType(env semtypes.Env, itemTy semtypes.SemType) semtypes.SemType {
 	recordDef := semtypes.NewMappingDefinition()
 	recordTy := recordDef.Define(env,
 		[]semtypes.Field{semtypes.FieldFrom("value", itemTy, false, false)},

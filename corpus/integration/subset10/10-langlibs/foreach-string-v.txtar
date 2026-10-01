@@ -1,0 +1,15 @@
+-- stdout --
+a
+😀
+b
+y
+1:a😀b
+abc
+a
+b
+ayby
+2
+😀
+empty
+32768
+-- stderr --

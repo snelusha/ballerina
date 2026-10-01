@@ -338,6 +338,13 @@ func buildFunctionDefinitions() map[packageKey][]*FunctionDefinition {
 			model.OpaqueFnMapRemove: {name: "remove", params: mapParams(), monomorphize: mapMember},
 			model.OpaqueFnMapGet:    {name: "get", params: mapParams(), monomorphize: mapMember},
 		},
+		{org: "ballerina", pkg: "lang.string"}: {
+			model.OpaqueFnStringIterator: {
+				name:         "iterator",
+				params:       []model.Param{{Name: "str"}},
+				monomorphize: stringIterator,
+			},
+		},
 		{org: "ballerina", pkg: "lang.xml"}: {
 			// ids 0-3 are opaque type symbols and stay nil.
 			model.OpaqueFnXMLIterator: {

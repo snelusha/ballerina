@@ -138,6 +138,7 @@ func stringTrim(_ *extern.Context, args []values.BalValue) (values.BalValue, err
 }
 
 func initStringModule(rt *runtime.Runtime) {
+	initStringIterator(rt)
 	env := rt.GetTypeEnv()
 	ld := semtypes.NewListDefinition()
 	byteArrTy := ld.Define(env, nil, semtypes.ListRest(semtypes.Byte))

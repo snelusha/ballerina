@@ -55,6 +55,8 @@ const (
 	// lang.map
 	OpaqueFnMapRemove = 0
 	OpaqueFnMapGet    = 1
+	// lang.string (id 0 is Char)
+	OpaqueFnStringIterator = 1
 	// lang.xml
 	OpaqueFnXMLIterator  = 4
 	OpaqueFnXMLGet       = 5
@@ -177,7 +179,10 @@ func langIntOpaqueSymbols() []Symbol {
 }
 
 func langStringOpaqueSymbols() []Symbol {
-	return []Symbol{newOpaqueTypeSymbol("Char", semtypes.Char, 0)}
+	return []Symbol{
+		newOpaqueTypeSymbol("Char", semtypes.Char, 0),
+		newOpaqueFunctionSymbol("iterator", OpaqueFnStringIterator),
+	}
 }
 
 func langXMLOpaqueSymbols() []Symbol {
