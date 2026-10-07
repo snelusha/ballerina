@@ -1,0 +1,19 @@
+-- stdout --
+-- stderr --
+error[SYNTAX_ERROR]: invalid int literal: 0xFFFFFFFFFFFFFFFFFF
+  --> numeric-literal-range-e.bal:19:23
+   |
+19 |     int hexOverflow = 0xFFFFFFFFFFFFFFFFFF; // @error
+   |                       ^^^^^^^^^^^^^^^^^^^^
+
+error[SYNTAX_ERROR]: invalid int literal: 99999999999999999999
+  --> numeric-literal-range-e.bal:18:27
+   |
+18 |     int decimalOverflow = 99999999999999999999; // @error
+   |                           ^^^^^^^^^^^^^^^^^^^^
+
+error[SYNTAX_ERROR]: invalid int literal: 99999999999999999999
+  --> numeric-literal-range-e.bal:20:29
+   |
+20 |     int negativeOverflow = -99999999999999999999; // @error
+   |                             ^^^^^^^^^^^^^^^^^^^^

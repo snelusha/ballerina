@@ -4682,19 +4682,25 @@ func resolveMappingConstructorBottomUp(t typeResolver, chain *binding, e *ast.BL
 }
 
 func resolveMappingConstructorWithExpectedType(t typeResolver, chain *binding, e *ast.BLangMappingConstructorExpr, expectedType semtypes.SemType) (semtypes.SemType, expressionEffect, bool) {
-	for _, f := range e.Fields {
-		kv := f.(*ast.BLangMappingKeyValueField)
-		if _, ok := resolveActionOrExpression(t, chain, kv.ValueExpr, semtypes.SemType{}); !ok {
-			return semtypes.SemType{}, expressionEffect{}, false
+	expectedMappingType := semtypes.Intersect(expectedType, semtypes.Mapping)
+	mat := semtypes.ToMappingAtomicType(t.typeContext(), expectedMappingType)
+	hasAtomicExpectedType := mat != nil
+	if !hasAtomicExpectedType {
+		for _, f := range e.Fields {
+			kv := f.(*ast.BLangMappingKeyValueField)
+			if _, ok := resolveActionOrExpression(t, chain, kv.ValueExpr, semtypes.SemType{}); !ok {
+				return semtypes.SemType{}, expressionEffect{}, false
+			}
+			resolveMappingKey(t, kv)
 		}
-		resolveMappingKey(t, kv)
 	}
-
-	resultType, mat, ok := selectMappingInherentType(t, e, expectedType)
+	resultType, selectedMat, ok := selectMappingInherentType(t, e, expectedType)
 	if !ok {
 		return semtypes.SemType{}, expressionEffect{}, false
 	}
-
+	if !hasAtomicExpectedType {
+		mat = selectedMat
+	}
 	for _, f := range e.Fields {
 		kv := f.(*ast.BLangMappingKeyValueField)
 		keyName, ok := common.MappingKeyName(t.compilerContext(), kv.Key)
@@ -4705,6 +4711,9 @@ func resolveMappingConstructorWithExpectedType(t typeResolver, chain *binding, e
 		kv.ValueExpr.SetDeterminedType(semtypes.SemType{})
 		if _, ok := resolveActionOrExpression(t, chain, kv.ValueExpr, requiredType); !ok {
 			return semtypes.SemType{}, expressionEffect{}, false
+		}
+		if hasAtomicExpectedType {
+			resolveMappingKey(t, kv)
 		}
 	}
 
@@ -5486,18 +5495,26 @@ func resolveListConstructorInner(t typeResolver, chain *binding, expr *ast.BLang
 }
 
 func resolveListConstructorWithExpectedType(t typeResolver, chain *binding, expr *ast.BLangListConstructorExpr, expectedType semtypes.SemType) (semtypes.SemType, expressionEffect, bool) {
+	expectedListType := semtypes.Intersect(expectedType, semtypes.List)
+	lat := semtypes.ToListAtomicType(t.typeContext().Env(), expectedListType)
+	hasAtomicExpectedType := lat != nil
 	spreadMembers := make([]bool, len(expr.Exprs))
 	for i, memberExpr := range expr.Exprs {
 		spreadMembers[i] = expr.IsSpreadMember(i) || isQueryAggregatedVariableReference(chain, memberExpr)
-		if _, ok := resolveActionOrExpression(t, chain, memberExpr, semtypes.SemType{}); !ok {
-			return semtypes.SemType{}, expressionEffect{}, false
+		if !hasAtomicExpectedType {
+			if _, ok := resolveActionOrExpression(t, chain, memberExpr, semtypes.SemType{}); !ok {
+				return semtypes.SemType{}, expressionEffect{}, false
+			}
 		}
 	}
 	setListConstructorSpreadMembers(expr, spreadMembers)
 
-	resultType, lat, ok := selectListInherentType(t, expr, expectedType)
+	resultType, selectedLat, ok := selectListInherentType(t, expr, expectedType)
 	if !ok {
 		return semtypes.SemType{}, expressionEffect{}, false
+	}
+	if !hasAtomicExpectedType {
+		lat = &selectedLat
 	}
 
 	memberIndex := 0
@@ -5534,7 +5551,7 @@ func resolveListConstructorWithExpectedType(t typeResolver, chain *binding, expr
 		}
 	}
 
-	expr.AtomicType = lat
+	expr.AtomicType = *lat
 	expr.SetDeterminedType(resultType)
 	return resultType, defaultExpressionEffect(chain), true
 }

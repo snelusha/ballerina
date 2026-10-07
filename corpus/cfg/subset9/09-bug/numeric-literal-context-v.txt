@@ -1,0 +1,48 @@
+(main
+  (bb0 () ()
+    (var-def
+      (variable value (type
+        (value-type decimal)) (expr
+        (literal 99999999999999999999))))
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref value))))
+    (expression-stmt
+      (invocation io println (
+        (binary-expr ==
+          (simple-var-ref value)
+          (literal 99999999999999999999)))))
+    (var-def
+      (variable list (type
+        (array-type
+          (value-type decimal) dimensions: 1 ([]))) (expr
+        (list-constructor-expr
+          (literal 1.50)
+          (literal 12345678901234567890.123)))))
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref list))))
+    (var-def
+      (variable mapping (type
+        (constrained-type
+          (builtin-ref-type map)
+          (value-type decimal))) (expr
+        (mapping-constructor-expr
+          (key-value
+            (literal value)
+            (literal 1.50))))))
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref mapping))))
+    (var-def
+      (variable decimalRecord (type
+        (user-defined-type DecimalRecord)) (expr
+        (mapping-constructor-expr
+          (key-value
+            (literal value)
+            (literal 2.500))))))
+    (expression-stmt
+      (invocation io println (
+        (simple-var-ref decimalRecord))))
+  )
+)

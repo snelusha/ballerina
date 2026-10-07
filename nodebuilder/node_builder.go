@@ -20,7 +20,6 @@ package nodebuilder
 import (
 	"fmt"
 	"iter"
-	"math"
 	"strconv"
 	"strings"
 
@@ -1097,32 +1096,21 @@ func (n *nodeBuilder) getIntegerLiteral(literal st.Node, textValue string) any {
 		if textValue[0] == '0' && len(textValue) > 1 {
 			n.cx.SyntaxError("invalid integer literal: leading zero", n.getPosition(literal))
 		}
-		return n.parseLong(literal, textValue, textValue, 10)
+		value, err := strconv.ParseInt(textValue, 10, 64)
+		if err != nil {
+			return textValue
+		}
+		return value
 	case st.HEX_INTEGER_LITERAL_TOKEN:
-		processedNodeValue := strings.ToLower(textValue)
-		processedNodeValue = strings.ReplaceAll(processedNodeValue, "0x", "")
-		return n.parseLong(literal, textValue, processedNodeValue, 16)
+		value, err := strconv.ParseInt(textValue[2:], 16, 64)
+		if err != nil {
+			return textValue
+		}
+		return value
 	default:
 		n.internalError("unexpected integer literal token kind", literal)
 		return nil
 	}
-}
-
-// parseLong parses a long integer value
-func (n *nodeBuilder) parseLong(literal st.Node, originalNodeValue, processedNodeValue string, radix int) any {
-	val, err := strconv.ParseInt(processedNodeValue, radix, 64)
-	if err != nil {
-		fVal, fErr := strconv.ParseFloat(processedNodeValue, 64)
-		if fErr != nil {
-			n.internalError("failed to parse numeric literal", literal)
-			return originalNodeValue
-		}
-		if math.IsInf(fVal, 0) {
-			return originalNodeValue
-		}
-		return fVal
-	}
-	return val
 }
 
 // withinByteRange checks if integer is in byte range (0-255)
@@ -2364,7 +2352,7 @@ func foldNegativeIntLiteral(lit *ast.BLangLiteral) bool {
 	if lit.GetLiteralKind() != ast.LiteralKindInt {
 		return false
 	}
-	if _, isFloat := lit.GetValue().(float64); !isFloat {
+	if _, isOutOfRange := lit.GetValue().(string); !isOutOfRange {
 		return false
 	}
 	raw := lit.OriginalValue
