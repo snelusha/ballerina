@@ -127,6 +127,7 @@ type CompilationOptions struct {
 	observabilityIncluded         optionalBool
 	dumpAST                       optionalBool
 	dumpRecoveredAST              optionalBool
+	dumpDesugaredAST              optionalBool
 	dumpBIR                       optionalBool
 	dumpBIRFile                   optionalBool
 	dumpCFG                       optionalBool
@@ -179,6 +180,11 @@ func (c CompilationOptions) DumpAST() bool {
 // DumpRecoveredAST returns whether recovered AST dumping is enabled.
 func (c CompilationOptions) DumpRecoveredAST() bool {
 	return c.dumpRecoveredAST.valueOr(false)
+}
+
+// DumpDesugaredAST returns whether desugared AST dumping is enabled.
+func (c CompilationOptions) DumpDesugaredAST() bool {
+	return c.dumpDesugaredAST.valueOr(false)
 }
 
 // DumpBIR returns whether BIR dumping is enabled.
@@ -314,6 +320,7 @@ func (c CompilationOptions) AcceptTheirs(theirs CompilationOptions) CompilationO
 		observabilityIncluded:         acceptOptionalBool(c.observabilityIncluded, theirs.observabilityIncluded),
 		dumpAST:                       acceptOptionalBool(c.dumpAST, theirs.dumpAST),
 		dumpRecoveredAST:              acceptOptionalBool(c.dumpRecoveredAST, theirs.dumpRecoveredAST),
+		dumpDesugaredAST:              acceptOptionalBool(c.dumpDesugaredAST, theirs.dumpDesugaredAST),
 		dumpBIR:                       acceptOptionalBool(c.dumpBIR, theirs.dumpBIR),
 		dumpBIRFile:                   acceptOptionalBool(c.dumpBIRFile, theirs.dumpBIRFile),
 		dumpCFG:                       acceptOptionalBool(c.dumpCFG, theirs.dumpCFG),
@@ -401,6 +408,12 @@ func (b *CompilationOptionsBuilder) WithDumpAST(value bool) *CompilationOptionsB
 // WithDumpRecoveredAST sets recovered AST dumping flag.
 func (b *CompilationOptionsBuilder) WithDumpRecoveredAST(value bool) *CompilationOptionsBuilder {
 	b.options.dumpRecoveredAST = optionalBoolOf(value)
+	return b
+}
+
+// WithDumpDesugaredAST sets desugared AST dumping flag.
+func (b *CompilationOptionsBuilder) WithDumpDesugaredAST(value bool) *CompilationOptionsBuilder {
+	b.options.dumpDesugaredAST = optionalBoolOf(value)
 	return b
 }
 

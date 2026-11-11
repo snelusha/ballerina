@@ -12,12 +12,13 @@ go build -tags debug -o bal-debug ./cli/cmd
 
 ## Debugging
 
-`bal run` and `bal pack` accept flags to inspect any stage of the compilation pipeline. Flags marked **debug only** are silently ignored in a release build:
+`bal run`, `bal build`, and `bal pack` accept flags to inspect stages of the compilation pipeline. Flags marked **debug only** are silently ignored in a release build:
 
 | Flag | Purpose | Debug only |
 | --- | --- | --- |
 | `--dump-ast` | Dump the abstract syntax tree | |
 | `--dump-recovered-ast` | Dump the AST after error recovery | |
+| `--dump-desugared-ast` | Dump the AST after desugaring | |
 | `--dump-cfg` | Dump the control flow graph | |
 | `--dump-bir` | Dump the generated BIR | |
 | `--format dot` | Render `--dump-cfg` output as Graphviz `.dot` | |

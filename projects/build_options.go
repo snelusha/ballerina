@@ -180,6 +180,12 @@ func (b BuildOptions) DumpRecoveredAST() bool {
 	return b.compilationOptions.DumpRecoveredAST()
 }
 
+// DumpDesugaredAST returns whether desugared AST dumping is enabled.
+// Delegated to CompilationOptions.
+func (b BuildOptions) DumpDesugaredAST() bool {
+	return b.compilationOptions.DumpDesugaredAST()
+}
+
 // DumpBIR returns whether BIR dumping is enabled.
 // Delegated to CompilationOptions.
 func (b BuildOptions) DumpBIR() bool {
@@ -393,6 +399,13 @@ func (b *BuildOptionsBuilder) WithDumpAST(value bool) *BuildOptionsBuilder {
 // Delegates to CompilationOptionsBuilder.
 func (b *BuildOptionsBuilder) WithDumpRecoveredAST(value bool) *BuildOptionsBuilder {
 	b.compilationOptionsBuilder.WithDumpRecoveredAST(value)
+	return b
+}
+
+// WithDumpDesugaredAST sets whether desugared AST dumping is enabled.
+// Delegates to CompilationOptionsBuilder.
+func (b *BuildOptionsBuilder) WithDumpDesugaredAST(value bool) *BuildOptionsBuilder {
+	b.compilationOptionsBuilder.WithDumpDesugaredAST(value)
 	return b
 }
 

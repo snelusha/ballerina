@@ -190,6 +190,7 @@ func testBalRunDumpFlags(t *testing.T, cli *balCLI) {
 		{"dump-st", "--dump-st", "dump-st.txtar", singleBal},
 		{"dump-tokens", "--dump-tokens", "dump-tokens.txtar", singleBal},
 		{"dump-ast", "--dump-ast", "dump-ast.txtar", singleBal},
+		{"dump-desugared-ast", "--dump-desugared-ast", "dump-desugared-ast.txtar", singleBal},
 		{"dump-recovered-ast", "--dump-recovered-ast", "dump-recovered-ast.txtar", recoveryBal},
 		{"dump-recovered-ast-missing-int-literal", "--dump-recovered-ast", "dump-recovered-ast-missing-int-literal.txtar", missingIntLiteralBal},
 		{"dump-cfg", "--dump-cfg", "dump-cfg.txtar", singleBal},
@@ -366,8 +367,8 @@ func testBalPackCorpus(t *testing.T, cli *balCLI) {
 			txtar: "help.txtar",
 		},
 		{
-			// These all just check that a debug flag doesn't break an
-			// otherwise-successful pack, so they share basic.txtar.
+			// These flags only check that an otherwise-successful pack still succeeds,
+			// so they share basic.txtar.
 			name:  "pack-with-dump-tokens",
 			args:  []string{"pack", basicProject, "--dump-tokens"},
 			txtar: "basic.txtar",
@@ -376,6 +377,11 @@ func testBalPackCorpus(t *testing.T, cli *balCLI) {
 			name:  "pack-with-dump-st",
 			args:  []string{"pack", basicProject, "--dump-st"},
 			txtar: "basic.txtar",
+		},
+		{
+			name:  "pack-with-dump-desugared-ast",
+			args:  []string{"pack", basicProject, "--dump-desugared-ast"},
+			txtar: "dump-desugared-ast.txtar",
 		},
 		{
 			name:  "pack-with-trace-recovery",
@@ -2417,8 +2423,8 @@ func testBalBuildScenarios(t *testing.T, cli *balCLI) {
 			txtar: "malformed-manifest.txtar",
 		},
 		{
-			// These four scenarios all just check that a debug flag doesn't
-			// break an otherwise-successful build, so they share one txtar.
+			// These scenarios only check that an otherwise-successful build still
+			// succeeds, so they share one txtar.
 			name:  "build-with-dump-tokens",
 			args:  []string{"build", filepath.Join(testdataRoot, "pure-ballerina", "project"), "--dump-tokens"},
 			txtar: "build-debug-flag-success.txtar",
@@ -2427,6 +2433,11 @@ func testBalBuildScenarios(t *testing.T, cli *balCLI) {
 			name:  "build-with-dump-st",
 			args:  []string{"build", filepath.Join(testdataRoot, "pure-ballerina", "project"), "--dump-st"},
 			txtar: "build-debug-flag-success.txtar",
+		},
+		{
+			name:  "build-with-dump-desugared-ast",
+			args:  []string{"build", filepath.Join(testdataRoot, "pure-ballerina", "project"), "--dump-desugared-ast"},
+			txtar: "dump-desugared-ast.txtar",
 		},
 		{
 			name:  "build-with-trace-recovery",

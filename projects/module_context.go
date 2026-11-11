@@ -381,6 +381,15 @@ func analyzeAndDesugar(moduleCtx *moduleContext) {
 	compilerCtx.StartStage(context.StageDesugaring)
 	moduleCtx.bLangPkg = desugar.DesugarPackage(moduleCtx.compilerCtx, moduleCtx.bLangPkg, moduleCtx.importedSymbols)
 	compilerCtx.EndStage()
+
+	// Dump desugared AST if requested.
+	if compilationOptions.DumpDesugaredAST() {
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintln(os.Stderr, "==================BEGIN DESUGARED AST==================")
+		fmt.Fprintln(os.Stderr, strings.TrimSpace(desugar.PrettyPrintPackage(moduleCtx.bLangPkg)))
+		fmt.Fprintln(os.Stderr, "===================END DESUGARED AST===================")
+	}
+
 	if compilerCtx.HasDiagnostics() {
 		return
 	}

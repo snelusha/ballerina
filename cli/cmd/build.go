@@ -50,6 +50,7 @@ type buildOptions struct {
 	dumpST           bool
 	dumpAST          bool
 	dumpRecoveredAST bool
+	dumpDesugaredAST bool
 	dumpCFG          bool
 	dumpBIR          bool
 	traceRecovery    bool
@@ -90,6 +91,7 @@ func createBuildCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.dumpST, "dump-st", false, "Dump syntax tree")
 	cmd.Flags().BoolVar(&opts.dumpAST, "dump-ast", false, "Dump abstract syntax tree")
 	cmd.Flags().BoolVar(&opts.dumpRecoveredAST, "dump-recovered-ast", false, "Dump recovered abstract syntax tree")
+	cmd.Flags().BoolVar(&opts.dumpDesugaredAST, "dump-desugared-ast", false, "Dump desugared abstract syntax tree")
 	cmd.Flags().BoolVar(&opts.dumpCFG, "dump-cfg", false, "Dump control flow graph")
 	cmd.Flags().BoolVar(&opts.dumpBIR, "dump-bir", false, "Dump Ballerina Intermediate Representation")
 	cmd.Flags().BoolVar(&opts.traceRecovery, "trace-recovery", false, "Enable error recovery tracing")
@@ -128,6 +130,7 @@ func runBuild(cmd *cobra.Command, args []string, opts *buildOptions) error {
 	buildOpts := projects.NewBuildOptionsBuilder().
 		WithDumpAST(opts.dumpAST).
 		WithDumpRecoveredAST(opts.dumpRecoveredAST).
+		WithDumpDesugaredAST(opts.dumpDesugaredAST).
 		WithDumpBIR(opts.dumpBIR).
 		WithDumpCFG(opts.dumpCFG).
 		WithDumpCFGFormat(projects.ParseCFGFormat(opts.format)).
