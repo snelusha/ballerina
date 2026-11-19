@@ -1,0 +1,6 @@
+-- stdout --
+{"value":10.0}
+false
+[10.0,-0.0,2.5,1e20]
+{"value":10.0}
+-- stderr --

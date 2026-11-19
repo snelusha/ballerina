@@ -1,0 +1,4 @@
+-- stdout --
+{"value":10.0}
+false
+-- stderr --

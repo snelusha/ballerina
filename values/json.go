@@ -19,6 +19,7 @@ package values
 
 import (
 	"encoding/json"
+	"math"
 
 	"github.com/ballerina-nutcracker/ballerina/decimal"
 	"github.com/ballerina-nutcracker/ballerina/semtypes"
@@ -45,7 +46,10 @@ func balToGoJSON(v BalValue) any {
 	case int64:
 		return t
 	case float64:
-		return t
+		if math.IsNaN(t) || math.IsInf(t, 0) {
+			return t
+		}
+		return json.RawMessage(FormatFloat(t))
 	case *decimal.Decimal:
 		return json.RawMessage(t.String())
 	case string:
