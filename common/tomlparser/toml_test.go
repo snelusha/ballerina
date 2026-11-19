@@ -923,3 +923,51 @@ func TestMultilineStringOpeningNewline(t *testing.T) {
 		})
 	}
 }
+
+// TestMultilineBasicStringLineEndingBackslash checks that a backslash followed
+// by optional spaces or tabs and a newline trims all whitespace and newlines up
+// to the next non-whitespace character or closing delimiter.
+func TestMultilineBasicStringLineEndingBackslash(t *testing.T) {
+	cases := []struct {
+		name  string
+		input string
+		want  string
+	}{
+		{"LF", "x = \"\"\"a \\\nb\"\"\"\n", "a b"},
+		{"CRLF", "x = \"\"\"a \\\r\nb\"\"\"\n", "a b"},
+		{"trailing spaces", "x = \"\"\"a \\  \nb\"\"\"\n", "a b"},
+		{"trailing tab and space before CRLF", "x = \"\"\"a \\\t \r\nb\"\"\"\n", "a b"},
+		{"blank and indented lines", "x = \"\"\"a \\\n\n  \r\n   b\"\"\"\n", "a b"},
+		{"up to closing delimiter", "x = \"\"\"a \\\n   \"\"\"\n", "a "},
+		{"after opening delimiter", "x = \"\"\"\\\n   a\"\"\"\n", "a"},
+		{"escaped backslash before newline", "x = \"\"\"a\\\\\nb\"\"\"\n", "a\\\nb"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc, err := ReadString(tc.input)
+			if err != nil {
+				t.Fatalf("ReadString(%q): unexpected error: %v", tc.input, err)
+			}
+			got, ok := doc.GetString("x")
+			if !ok {
+				t.Fatalf("ReadString(%q): key x missing or not a string", tc.input)
+			}
+			if got != tc.want {
+				t.Errorf("ReadString(%q): x = %q, want %q", tc.input, got, tc.want)
+			}
+		})
+	}
+}
+
+// TestMultilineBasicStringInvalidBackslash checks that a backslash followed by
+// whitespace but no newline is still reported as an invalid escape sequence.
+func TestMultilineBasicStringInvalidBackslash(t *testing.T) {
+	for _, input := range []string{
+		"x = \"\"\"a \\   \"\"\"\n",
+		"x = \"\"\"a \\ b\"\"\"\n",
+	} {
+		if _, err := ReadString(input); err == nil {
+			t.Errorf("ReadString(%q): expected an invalid escape sequence error", input)
+		}
+	}
+}

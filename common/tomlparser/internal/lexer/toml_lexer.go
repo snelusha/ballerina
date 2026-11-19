@@ -146,19 +146,6 @@ func (l *Lexer) skipLeadingTrivia() {
 	}
 }
 
-func (l *Lexer) consumeEndOfLine() {
-	c := l.reader.Peek()
-	switch c {
-	case charCarriageReturn:
-		l.reader.Advance()
-		if l.reader.Peek() == charNewline {
-			l.reader.Advance()
-		}
-	case charNewline:
-		l.reader.Advance()
-	}
-}
-
 // consumeOpeningNewline consumes one LF or CRLF right after a multiline string's opening delimiter.
 func (l *Lexer) consumeOpeningNewline() {
 	switch {
@@ -395,8 +382,17 @@ func (l *Lexer) readLiteralStringToken() Token {
 	return Token{Kind: TokenIdentifier, Value: string(buf), Line: line, Column: col, Offset: offset}
 }
 
+// isLineEndingBackslash reports whether the backslash at the current position is followed by optional spaces or tabs and a newline.
+func (l *Lexer) isLineEndingBackslash() bool {
+	i := 1
+	for l.reader.PeekAt(i) == charSpace || l.reader.PeekAt(i) == charTab {
+		i++
+	}
+	c := l.reader.PeekAt(i)
+	return c == charNewline || (c == charCarriageReturn && l.reader.PeekAt(i+1) == charNewline)
+}
+
 // readMultilineStringToken reads content inside a multiline basic string.
-// TODO: TOML-P2 — full multiline string processing (line-ending backslash trimming)
 func (l *Lexer) readMultilineStringToken() Token {
 	l.reader.Mark()
 	line, col, offset := l.reader.Line(), l.reader.Col(), l.reader.BytePos()
@@ -437,13 +433,9 @@ func (l *Lexer) readMultilineStringToken() Token {
 			l.reader.Advance()
 			continue
 		}
-		// Handle escape sequences
-		next := l.reader.PeekAt(1)
-		switch next {
-		case charNewline, charCarriageReturn:
-			// Line-ending backslash: skip backslash + newline + leading whitespace
-			l.reader.Advance() // backslash
-			l.consumeEndOfLine()
+		if l.isLineEndingBackslash() {
+			// Trim the backslash and all whitespace and newlines up to the next non-whitespace character.
+			l.reader.Advance()
 			for !l.reader.IsEOF() {
 				nc := l.reader.Peek()
 				if nc == charSpace || nc == charTab || nc == charNewline || nc == charCarriageReturn {
@@ -452,6 +444,11 @@ func (l *Lexer) readMultilineStringToken() Token {
 					break
 				}
 			}
+			continue
+		}
+		// Handle escape sequences
+		next := l.reader.PeekAt(1)
+		switch next {
 		case 'n':
 			l.reader.AdvanceN(2)
 			buf = append(buf, '\n')

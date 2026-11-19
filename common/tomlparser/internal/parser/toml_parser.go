@@ -473,7 +473,6 @@ func (p *Parser) parseBasicString() ast.ValueNode {
 }
 
 func (p *Parser) parseMultilineBasicString() ast.ValueNode {
-	// TODO: TOML-P2 — full multiline string semantics (backslash continuation)
 	openTok := p.reader.read() // consume """
 	var content string
 	tok := p.reader.peek()
