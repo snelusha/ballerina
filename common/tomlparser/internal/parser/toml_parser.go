@@ -473,7 +473,7 @@ func (p *Parser) parseBasicString() ast.ValueNode {
 }
 
 func (p *Parser) parseMultilineBasicString() ast.ValueNode {
-	// TODO: TOML-P2 — full multiline string semantics (first-newline trim, backslash continuation)
+	// TODO: TOML-P2 — full multiline string semantics (backslash continuation)
 	openTok := p.reader.read() // consume """
 	var content string
 	tok := p.reader.peek()
@@ -481,9 +481,6 @@ func (p *Parser) parseMultilineBasicString() ast.ValueNode {
 		content = tok.Value
 		p.reader.read()
 	}
-	// Trim leading newline as per TOML spec for multiline strings.
-	content = strings.TrimPrefix(content, "\n")
-	content = strings.TrimPrefix(content, "\r\n")
 	closeTok := p.reader.peek()
 	if closeTok.Kind == lexer.TokenTripleDoubleQuote {
 		closeTok = p.reader.read()
@@ -521,8 +518,6 @@ func (p *Parser) parseMultilineLiteralString() ast.ValueNode {
 		content = tok.Value
 		p.reader.read()
 	}
-	content = strings.TrimPrefix(content, "\n")
-	content = strings.TrimPrefix(content, "\r\n")
 	closeTok := p.reader.peek()
 	if closeTok.Kind == lexer.TokenTripleSingleQuote {
 		closeTok = p.reader.read()

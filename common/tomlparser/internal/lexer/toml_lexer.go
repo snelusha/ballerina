@@ -159,6 +159,16 @@ func (l *Lexer) consumeEndOfLine() {
 	}
 }
 
+// consumeOpeningNewline consumes one LF or CRLF right after a multiline string's opening delimiter.
+func (l *Lexer) consumeOpeningNewline() {
+	switch {
+	case l.reader.Peek() == charNewline:
+		l.reader.Advance()
+	case l.reader.Peek() == charCarriageReturn && l.reader.PeekAt(1) == charNewline:
+		l.reader.AdvanceN(2)
+	}
+}
+
 func (l *Lexer) consumeComment() {
 	// consume '#' and everything up to (but not including) newline
 	for !l.reader.IsEOF() {
@@ -214,6 +224,7 @@ func (l *Lexer) readToken() Token {
 		if l.reader.Peek() == charSingleQuote && l.reader.PeekAt(1) == charSingleQuote {
 			l.reader.AdvanceN(2)
 			l.StartMode(ModeMultilineLiteralString)
+			l.consumeOpeningNewline()
 			return Token{Kind: TokenTripleSingleQuote, Value: "'''", Line: line, Column: col, Offset: offset}
 		}
 		l.StartMode(ModeLiteralString)
@@ -224,6 +235,7 @@ func (l *Lexer) readToken() Token {
 		if l.reader.Peek() == charDoubleQuote && l.reader.PeekAt(1) == charDoubleQuote {
 			l.reader.AdvanceN(2)
 			l.StartMode(ModeMultilineString)
+			l.consumeOpeningNewline()
 			return Token{Kind: TokenTripleDoubleQuote, Value: "\"\"\"", Line: line, Column: col, Offset: offset}
 		}
 		l.StartMode(ModeString)
@@ -474,7 +486,6 @@ func (l *Lexer) readMultilineStringToken() Token {
 }
 
 // readMultilineLiteralStringToken reads content inside a multiline literal string.
-// TODO: TOML-P2 — handle the first newline trim rule
 func (l *Lexer) readMultilineLiteralStringToken() Token {
 	l.reader.Mark()
 	line, col, offset := l.reader.Line(), l.reader.Col(), l.reader.BytePos()

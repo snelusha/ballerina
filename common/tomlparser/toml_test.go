@@ -858,3 +858,68 @@ func TestErrorRecoveryStopsAtNewline(t *testing.T) {
 		t.Errorf("key = %q (%T), want string \"value\"", val, val)
 	}
 }
+
+// TestMultilineStringOpeningNewline checks that exactly one physical LF or
+// CRLF immediately after a multiline string's opening delimiter is trimmed,
+// and that escaped or subsequent newlines are preserved.
+func TestMultilineStringOpeningNewline(t *testing.T) {
+	bodies := []struct {
+		name string
+		body string
+		want string
+	}{
+		{"no newline", "abc", "abc"},
+		{"LF", "\nabc", "abc"},
+		{"CRLF", "\r\nabc", "abc"},
+		{"LF then CRLF", "\n\r\nabc", "\r\nabc"},
+		{"LF then LF", "\n\nabc", "\nabc"},
+		{"CRLF then CRLF", "\r\n\r\nabc", "\r\nabc"},
+	}
+	delimiters := []struct {
+		name  string
+		delim string
+	}{
+		{"basic", `"""`},
+		{"literal", `'''`},
+	}
+
+	type testCase struct {
+		name  string
+		input string
+		want  string
+	}
+	var cases []testCase
+	for _, d := range delimiters {
+		for _, b := range bodies {
+			cases = append(cases, testCase{
+				name:  d.name + "/" + b.name,
+				input: "x = " + d.delim + b.body + d.delim + "\n",
+				want:  b.want,
+			})
+		}
+	}
+	cases = append(cases,
+		testCase{"basic/escaped LF", "x = \"\"\"\\nabc\"\"\"\n", "\nabc"},
+		testCase{"basic/LF then escaped LF", "x = \"\"\"\n\\nabc\"\"\"\n", "\nabc"},
+		testCase{"basic/CRLF then escaped CRLF", "x = \"\"\"\r\n\\r\\nabc\"\"\"\n", "\r\nabc"},
+	)
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc, err := ReadString(tc.input)
+			if err != nil {
+				t.Fatalf("ReadString(%q): unexpected error: %v", tc.input, err)
+			}
+			if diags := doc.Diagnostics(); len(diags) != 0 {
+				t.Fatalf("ReadString(%q): unexpected diagnostics: %v", tc.input, diags)
+			}
+			got, ok := doc.GetString("x")
+			if !ok {
+				t.Fatalf("ReadString(%q): key x missing or not a string", tc.input)
+			}
+			if got != tc.want {
+				t.Errorf("ReadString(%q): x = %q, want %q", tc.input, got, tc.want)
+			}
+		})
+	}
+}
